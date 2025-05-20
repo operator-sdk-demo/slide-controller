@@ -1,0 +1,23 @@
+# permissions for end users to view slides.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: slide-controller
+    app.kubernetes.io/managed-by: kustomize
+  name: slides-viewer-role
+rules:
+- apiGroups:
+  - presenations.haavard.dev
+  resources:
+  - slides
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - presenations.haavard.dev
+  resources:
+  - slides/status
+  verbs:
+  - get

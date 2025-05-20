@@ -1,0 +1,27 @@
+# permissions for end users to edit slides.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: slide-controller
+    app.kubernetes.io/managed-by: kustomize
+  name: slides-editor-role
+rules:
+- apiGroups:
+  - presenations.haavard.dev
+  resources:
+  - slides
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - presenations.haavard.dev
+  resources:
+  - slides/status
+  verbs:
+  - get

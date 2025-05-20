@@ -1,0 +1,9 @@
+apiVersion: presenations.haavard.dev/v1alpha1
+kind: Slides
+metadata:
+  labels:
+    app.kubernetes.io/name: slide-controller
+    app.kubernetes.io/managed-by: kustomize
+  name: slides-sample
+spec:
+  # TODO(user): Add fields here
