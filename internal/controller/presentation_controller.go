@@ -29,6 +29,8 @@ import (
 	presentationsv1alpha1 "github.com/operator-sdk-demo/slide-controller/api/v1alpha1"
 	"github.com/operator-sdk-demo/slide-controller/pkg/mdparser"
 	"github.com/operator-sdk-demo/slide-controller/pkg/mdrender"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // PresentationReconciler reconciles a Presentation object
@@ -75,10 +77,118 @@ func (r *PresentationReconciler) Reconcile(
 
 	rendered := mdrender.RenderMarkdown(&presentation.Spec)
 
-	// TODO: create/update configmap + deployment + service
-	configMap, deployment, service := mdparser.CreateMarkdownParser(req.Name, rendered)
+	if err = r.SetupPresentation(ctx, req, presentation, rendered); err != nil {
+		return ctrl.Result{}, err
+	}
 
 	return ctrl.Result{}, nil
+}
+
+func (r *PresentationReconciler) SetupPresentation(
+	ctx context.Context,
+	req ctrl.Request,
+	presentation *presentationsv1alpha1.Presentation,
+	rendered string,
+) error {
+	logger := log.FromContext(ctx)
+
+	configMap, deployment, service := mdparser.CreateMarkdownParser(req.Name, rendered)
+
+	if err := ctrl.SetControllerReference(presentation, configMap, r.Scheme); err != nil {
+		logger.Error(err, "unable to set controller reference for configmap")
+		return err
+	}
+	if err := ctrl.SetControllerReference(presentation, deployment, r.Scheme); err != nil {
+		logger.Error(err, "unable to set controller reference for deployment")
+		return err
+	}
+	if err := ctrl.SetControllerReference(presentation, service, r.Scheme); err != nil {
+		logger.Error(err, "unable to set controller reference for service")
+		return err
+	}
+
+	// Apply ConfigMap
+	existingConfigMap := &corev1.ConfigMap{}
+	err := r.Get(
+		ctx,
+		client.ObjectKey{Name: configMap.Name, Namespace: configMap.Namespace},
+		existingConfigMap,
+	)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			// Create new ConfigMap
+			if err := r.Create(ctx, configMap); err != nil {
+				logger.Error(err, "unable to create ConfigMap")
+				return err
+			}
+		} else {
+			logger.Error(err, "unable to get ConfigMap")
+			return err
+		}
+	} else {
+		// Update existing ConfigMap
+		existingConfigMap.Data = configMap.Data
+		if err := r.Update(ctx, existingConfigMap); err != nil {
+			logger.Error(err, "unable to update ConfigMap")
+			return err
+		}
+	}
+
+	// Apply Deployment
+	existingDeployment := &appsv1.Deployment{}
+	err = r.Get(
+		ctx,
+		client.ObjectKey{Name: deployment.Name, Namespace: deployment.Namespace},
+		existingDeployment,
+	)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			// Create new Deployment
+			if err := r.Create(ctx, deployment); err != nil {
+				logger.Error(err, "unable to create Deployment")
+				return err
+			}
+		} else {
+			logger.Error(err, "unable to get Deployment")
+			return err
+		}
+	} else {
+		// Update existing Deployment
+		existingDeployment.Spec = deployment.Spec
+		if err := r.Update(ctx, existingDeployment); err != nil {
+			logger.Error(err, "unable to update Deployment")
+			return err
+		}
+	}
+
+	// Apply Service
+	existingService := &corev1.Service{}
+	err = r.Get(
+		ctx,
+		client.ObjectKey{Name: service.Name, Namespace: service.Namespace},
+		existingService,
+	)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			// Create new Service
+			if err := r.Create(ctx, service); err != nil {
+				logger.Error(err, "unable to create Service")
+				return err
+			}
+		} else {
+			logger.Error(err, "unable to get Service")
+			return err
+		}
+	} else {
+		// Update existing Service
+		existingService.Spec = service.Spec
+		if err := r.Update(ctx, existingService); err != nil {
+			logger.Error(err, "unable to update Service")
+			return err
+		}
+	}
+
+	return nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
