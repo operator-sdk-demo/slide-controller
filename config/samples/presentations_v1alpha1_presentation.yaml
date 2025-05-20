@@ -6,4 +6,20 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
   name: presentation-sample
 spec:
-  # TODO(user): Add fields here
+  slides:
+    - title: "Kubernetes re-cap"
+      bullets:
+        - Orchestrator that runs on a set of machines in a cluster,
+          lets us schedule workloads on a set of machines.
+        - Commonly used for microservices and larger systems when e.g. App service/container apps stops scaling well.
+        - Apply resources/workloads with yaml specs
+        - Create resources like services, deployments, ingress by applying yaml specs with e.g. `kubectl`
+        - GitOps, have git repository that indicates which resources should be applied
+        - use e.g. argoCD to continuously apply resources defined in GitOps repository
+        - Kubernetes has controllers that reads the resource manifests, reacts and updates the cluster accordingly
+
+    - title: "What is the operator pattern?"
+      bullets:
+        - A controller that encapsulates operational logic, such that the declarative configuration in a manifest is realized in the cluster
+      images:
+        - "https://iximiuz.com/kubernetes-operator-pattern/kube-control-loop-3000-opt.png"
