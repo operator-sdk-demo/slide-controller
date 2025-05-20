@@ -16,8 +16,8 @@ resources:
     namespaced: true
   controller: true
   domain: haavard.dev
-  group: presenations
-  kind: Slides
+  group: presentations
+  kind: Presentation
   path: github.com/operator-sdk-demo/slide-controller/api/v1alpha1
   version: v1alpha1
 version: "3"

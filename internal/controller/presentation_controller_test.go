@@ -27,10 +27,10 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	presenationsv1alpha1 "github.com/operator-sdk-demo/slide-controller/api/v1alpha1"
+	presentationsv1alpha1 "github.com/operator-sdk-demo/slide-controller/api/v1alpha1"
 )
 
-var _ = Describe("Slides Controller", func() {
+var _ = Describe("Presentation Controller", func() {
 	Context("When reconciling a resource", func() {
 		const resourceName = "test-resource"
 
@@ -40,13 +40,13 @@ var _ = Describe("Slides Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
-		slides := &presenationsv1alpha1.Slides{}
+		presentation := &presentationsv1alpha1.Presentation{}
 
 		BeforeEach(func() {
-			By("creating the custom resource for the Kind Slides")
-			err := k8sClient.Get(ctx, typeNamespacedName, slides)
+			By("creating the custom resource for the Kind Presentation")
+			err := k8sClient.Get(ctx, typeNamespacedName, presentation)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &presenationsv1alpha1.Slides{
+				resource := &presentationsv1alpha1.Presentation{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      resourceName,
 						Namespace: "default",
@@ -59,16 +59,16 @@ var _ = Describe("Slides Controller", func() {
 
 		AfterEach(func() {
 			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &presenationsv1alpha1.Slides{}
+			resource := &presentationsv1alpha1.Presentation{}
 			err := k8sClient.Get(ctx, typeNamespacedName, resource)
 			Expect(err).NotTo(HaveOccurred())
 
-			By("Cleanup the specific resource instance Slides")
+			By("Cleanup the specific resource instance Presentation")
 			Expect(k8sClient.Delete(ctx, resource)).To(Succeed())
 		})
 		It("should successfully reconcile the resource", func() {
 			By("Reconciling the created resource")
-			controllerReconciler := &SlidesReconciler{
+			controllerReconciler := &PresentationReconciler{
 				Client: k8sClient,
 				Scheme: k8sClient.Scheme(),
 			}
