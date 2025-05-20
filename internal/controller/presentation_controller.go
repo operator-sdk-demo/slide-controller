@@ -92,7 +92,11 @@ func (r *PresentationReconciler) SetupPresentation(
 ) error {
 	logger := log.FromContext(ctx)
 
-	configMap, deployment, service := mdparser.CreateMarkdownParser(req.Name, rendered)
+	configMap, deployment, service := mdparser.CreateMarkdownParser(
+		req.Name,
+		req.Namespace,
+		rendered,
+	)
 
 	if err := ctrl.SetControllerReference(presentation, configMap, r.Scheme); err != nil {
 		logger.Error(err, "unable to set controller reference for configmap")

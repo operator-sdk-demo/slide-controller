@@ -17,15 +17,27 @@ const appLabel string = "app"
 
 func CreateMarkdownParser(
 	name string,
+	namespace string,
 	markdown string,
 ) (*corev1.ConfigMap, *appsv1.Deployment, *corev1.Service) {
-	return createConfigMap(name, markdown), createDeployment(name), createService(name)
+	return createConfigMap(
+			name,
+			namespace,
+			markdown,
+		), createDeployment(
+			name,
+			namespace,
+		), createService(
+			name,
+			namespace,
+		)
 }
 
-func createConfigMap(name string, markdown string) *corev1.ConfigMap {
+func createConfigMap(name string, namespace string, markdown string) *corev1.ConfigMap {
 	return &corev1.ConfigMap{
 		ObjectMeta: v1.ObjectMeta{
-			Name: name,
+			Name:      presConfigName,
+			Namespace: namespace,
 		},
 		Data: map[string]string{
 			"presentation.md": markdown,
@@ -33,10 +45,11 @@ func createConfigMap(name string, markdown string) *corev1.ConfigMap {
 	}
 }
 
-func createDeployment(name string) *appsv1.Deployment {
+func createDeployment(name string, namespace string) *appsv1.Deployment {
 	return &appsv1.Deployment{
 		ObjectMeta: v1.ObjectMeta{
-			Name: name,
+			Name:      name,
+			Namespace: namespace,
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: ptr.To[int32](1),
@@ -53,10 +66,12 @@ func createDeployment(name string) *appsv1.Deployment {
 							Name:    "python",
 							Image:   "python:3.13-alpine",
 							Command: []string{"/bin/sh", "-c"},
-							Args: []string{fmt.Sprintf(`
-								| pip install mkslides
-								mkslides serve %s
-								`, presConfigPath)},
+							Args: []string{
+								fmt.Sprintf(
+									"pip install mkslides && mkslides serve %s",
+									presConfigPath,
+								),
+							},
 							VolumeMounts: []corev1.VolumeMount{
 								{Name: presConfigName, MountPath: presConfigPath},
 							},
@@ -67,7 +82,9 @@ func createDeployment(name string) *appsv1.Deployment {
 							Name: presConfigName,
 							VolumeSource: corev1.VolumeSource{
 								ConfigMap: &corev1.ConfigMapVolumeSource{
-									Items: []corev1.KeyToPath{{Key: "name", Path: presConfigName}},
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: presConfigName,
+									},
 								},
 							},
 						},
@@ -78,10 +95,11 @@ func createDeployment(name string) *appsv1.Deployment {
 	}
 }
 
-func createService(name string) *corev1.Service {
+func createService(name string, namespace string) *corev1.Service {
 	return &corev1.Service{
 		ObjectMeta: v1.ObjectMeta{
-			Name: name,
+			Name:      name,
+			Namespace: namespace,
 		},
 		Spec: corev1.ServiceSpec{
 			Selector: map[string]string{

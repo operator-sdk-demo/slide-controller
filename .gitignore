@@ -26,3 +26,8 @@ go.work
 *.swo
 *~
 Session.vim
+.tilt/
+
+
+# Ignore DevSpace cache and log folder
+.devspace/

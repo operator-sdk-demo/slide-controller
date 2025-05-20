@@ -8,7 +8,7 @@ import (
 	presentationsv1alpha1 "github.com/operator-sdk-demo/slide-controller/api/v1alpha1"
 )
 
-const TEMPLATE = `
+const mdTemplate = `
 {{ range .Slides }}
 ### {{ .Title }}
 
@@ -17,7 +17,7 @@ const TEMPLATE = `
 {{ end }}
 
 {{ range .Images }}
-![]({{ .})
+![]({{ . }})
 {{ end }}
 
 ---
@@ -25,8 +25,7 @@ const TEMPLATE = `
 `
 
 func RenderMarkdown(presentation *presentationsv1alpha1.PresentationSpec) string {
-	// Parse the template
-	tmpl, err := template.New("presentation").Parse(TEMPLATE)
+	tmpl, err := template.New("presentation").Parse(mdTemplate)
 	if err != nil {
 		log.Fatalf("Error parsing template: %v", err)
 	}
