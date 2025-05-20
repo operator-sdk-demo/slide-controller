@@ -5,9 +5,9 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - presenations.haavard.dev
+  - presentations.haavard.dev
   resources:
-  - slides
+  - presentations
   verbs:
   - create
   - delete
@@ -17,15 +17,15 @@ rules:
   - update
   - watch
 - apiGroups:
-  - presenations.haavard.dev
+  - presentations.haavard.dev
   resources:
-  - slides/finalizers
+  - presentations/finalizers
   verbs:
   - update
 - apiGroups:
-  - presenations.haavard.dev
+  - presentations.haavard.dev
   resources:
-  - slides/status
+  - presentations/status
   verbs:
   - get
   - patch

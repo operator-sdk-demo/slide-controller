@@ -23,17 +23,23 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// SlidesSpec defines the desired state of Slides
-type SlidesSpec struct {
+// PresentationSpec defines the desired state of Presentation
+type PresentationSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of Slides. Edit slides_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Foo is an example field of Presentation. Edit presentation_types.go to remove/update
+	Slides []Slide `json:"slides"`
 }
 
-// SlidesStatus defines the observed state of Slides
-type SlidesStatus struct {
+type Slide struct {
+	Title   string   `json:"title"`
+	Bullets []string `json:"bullets"`
+	Images  []string `json:"images,omitempty"`
+}
+
+// PresentationStatus defines the observed state of Presentation
+type PresentationStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -41,24 +47,24 @@ type SlidesStatus struct {
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 
-// Slides is the Schema for the slides API
-type Slides struct {
+// Presentation is the Schema for the presentations API
+type Presentation struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   SlidesSpec   `json:"spec,omitempty"`
-	Status SlidesStatus `json:"status,omitempty"`
+	Spec   PresentationSpec   `json:"spec,omitempty"`
+	Status PresentationStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// SlidesList contains a list of Slides
-type SlidesList struct {
+// PresentationList contains a list of Presentation
+type PresentationList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Slides `json:"items"`
+	Items           []Presentation `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&Slides{}, &SlidesList{})
+	SchemeBuilder.Register(&Presentation{}, &PresentationList{})
 }

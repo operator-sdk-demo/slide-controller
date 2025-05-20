@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: presentation-config
+data:
+  presentation.md: |
+    ### Kubernetes re-cap
+
+
+    - First bullet point
+
+    - Second bullet point
+
+
+
+    ![](https://iximiuz.com/kubernetes-operator-pattern/kube-control-loop-3000-opt.png)
+
+
+    ---
+
+    ### Next page
+
+
+    - Another bullet point
+
+    - Final bullet point
+    ---

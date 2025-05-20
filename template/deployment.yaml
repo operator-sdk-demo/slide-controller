@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: md-parser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: md-parser
+  template:
+    metadata:
+      labels:
+        app: md-parser
+    spec:
+      containers:
+        - name: python
+          image: python:3.13-alpine
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pip install mkslides
+              mkslides serve /presentation/
+          volumeMounts:
+            - name: presentation-config
+              mountPath: /presentation
+              subPath: presentation.md
+      volumes:
+        - name: presentation-config
+          configMap:
+            name: presentation-config

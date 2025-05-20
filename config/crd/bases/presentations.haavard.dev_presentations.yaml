@@ -4,20 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.16.1
-  name: slides.presenations.haavard.dev
+  name: presentations.presentations.haavard.dev
 spec:
-  group: presenations.haavard.dev
+  group: presentations.haavard.dev
   names:
-    kind: Slides
-    listKind: SlidesList
-    plural: slides
-    singular: slides
+    kind: Presentation
+    listKind: PresentationList
+    plural: presentations
+    singular: presentation
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Slides is the Schema for the slides API
+        description: Presentation is the Schema for the presentations API
         properties:
           apiVersion:
             description: |-
@@ -37,15 +37,33 @@ spec:
           metadata:
             type: object
           spec:
-            description: SlidesSpec defines the desired state of Slides
+            description: PresentationSpec defines the desired state of Presentation
             properties:
-              foo:
-                description: Foo is an example field of Slides. Edit slides_types.go
+              slides:
+                description: Foo is an example field of Presentation. Edit presentation_types.go
                   to remove/update
-                type: string
+                items:
+                  properties:
+                    bullets:
+                      items:
+                        type: string
+                      type: array
+                    images:
+                      items:
+                        type: string
+                      type: array
+                    title:
+                      type: string
+                  required:
+                  - bullets
+                  - title
+                  type: object
+                type: array
+            required:
+            - slides
             type: object
           status:
-            description: SlidesStatus defines the observed state of Slides
+            description: PresentationStatus defines the observed state of Presentation
             type: object
         type: object
     served: true
