@@ -33,8 +33,8 @@ type PresentationSpec struct {
 }
 
 type Slide struct {
-	Title   string   `json:"title"`
-	Bullets []string `json:"bullets"`
+	Title   string   `json:"title,omitempty"`
+	Bullets []string `json:"bullets,omitempty"`
 	Images  []string `json:"images,omitempty"`
 }
 

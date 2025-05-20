@@ -54,9 +54,6 @@ spec:
                       type: array
                     title:
                       type: string
-                  required:
-                  - bullets
-                  - title
                   type: object
                 type: array
             required:
